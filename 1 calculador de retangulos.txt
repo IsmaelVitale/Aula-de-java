@@ -1,0 +1,103 @@
+import java.util.Scanner;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+
+public class ExercicicioUm {
+
+        //mensagens
+        private static final String MENSAGEM_BOAS_VINDAS = "Bem-vindo ao calculo de areas de retangulos!"; 
+        private static final String MENSAGEM_INSTRUCOES = "Este programa ira ajuda-lo a calcular a area de dois retangulos. \n"+
+	    "Voce precisara fornecer as seguintes informacoes: \n"+ 
+            "1. O retangulo superior. \n"+
+            "2. O retangulo inferior.";
+        private static final String MENSAGEM_ENTRADA_INVALIDA = "Entrada invalida. Por favor, digite um numero valido com ponto ou virgula separando caso seja decimal";
+        private static final String MENSAGEM_REPETICAO = "Deseja calcular novamente? (s/n): ";
+        private static final String MENSAGEM_REPETICAO_INVALIDA = "Entrada invalida!!! \nCaso queira calcular novamente digite corretamente 's' ou 'n'";
+        private static final String MENSAGEM_MEDIDA_INVALIDA = "A medida usada deve ser maior que zero. Por favor use um numero valido";
+        private static final String MENSAGEM_CONCLUSAO = "Obrigado por utilizar!";
+    
+    public static void main(String[] args) {
+       
+       //Permite aceitar virgula para numeros decimais com virgula
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator(',');
+        DecimalFormat df = new DecimalFormat();
+        df.setDecimalFormatSymbols(symbols);
+
+        Scanner sc = new Scanner(System.in);
+        boolean continuar = true; //usado para repetir o codigo ao final
+        
+        while (continuar) {
+            
+            System.out.println(MENSAGEM_BOAS_VINDAS); //mensagens de boas vindas
+            System.out.println(MENSAGEM_INSTRUCOES);
+       
+            //Informacoes solicitadas, e utilizado o double para suporte de numeoros complexos
+            double a = lerNumero(sc, df, "Digite a largura do retangulo superior (a): ");
+            double b = lerNumero(sc, df, "Digite a altura em comum dos retangulos (b): ");
+            double d = lerNumero(sc, df, "Digite a largura do retangulo inferior (d): ");
+            
+            //Multiplicacao das areas fornecidas
+            double A1 = a * b;
+            double A2 = d * b;
+            double AT = A1 + A2;
+            
+            //Conclusao dos calculos
+            System.out.printf("A area total dos retangulos AT e: %.2f%n", AT);
+            System.out.printf("A area dos retangulos superior e inferior sao, respectivamente: %.2f e %.2f%n", A1, A2);
+            
+            
+            boolean respostaValida = false; //E utilizado para repetir a mensagem caso nao seja fornecida uma entrada valida
+            while (!respostaValida) {
+                System.out.print(MENSAGEM_REPETICAO);
+                String resposta = sc.nextLine().trim().toLowerCase();
+                
+                if (resposta.equals("s")) {
+                    continuar = true;
+                    respostaValida = true;
+                    }
+                else if (resposta.equals("n")) {
+                    continuar = false;
+                    respostaValida = true;
+                } else {
+                    System.out.println(MENSAGEM_REPETICAO_INVALIDA);
+                }
+            }
+            
+        }
+        //Aqui e finalizado caso o usuario deseje
+        System.out.println(MENSAGEM_CONCLUSAO);
+        sc.close();
+    }
+    //Aqui e onde e onde se impossibilita algum erro na entrada
+    private static double lerNumero(Scanner sc, DecimalFormat df, String prompt) {
+        //Caso o usuario digite um numero invalido sera instruido em como digitar corretamente
+        while (true){
+            System.out.print(prompt);
+            String input = sc.nextLine().trim();
+            input = input.replaceAll("\\s+", " "); 
+            //substitui ponto pot virgula
+            input = input.replace('.', ',');
+                if (!isValidNumber(input)){
+                    System.out.println(MENSAGEM_ENTRADA_INVALIDA);
+                    continue;
+                }
+                try{
+                    double numero = df.parse(input).doubleValue();
+                    if (numero <= 0) { //caso o usuario digite zero ou um numero negativo
+                    System.out.println(MENSAGEM_MEDIDA_INVALIDA);
+                    } 
+                    else{
+                    return numero;
+                    }
+                }
+                catch (ParseException e){
+                    System.out.println(MENSAGEM_ENTRADA_INVALIDA);
+                }
+        }
+    }
+    private static boolean isValidNumber(String input){ // usado para repetir a mensagem de erro caso o usuario digita algo alem de 0-9 ou separe os decimais usando algo alem de ponto ou virgula
+        return input.matches("[0-9]+([.,][0-9]+)?");
+    }
+}
